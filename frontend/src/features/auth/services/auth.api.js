@@ -1,59 +1,41 @@
 import axios from "axios";
 
-export async function register({username ,email, passward}) {
-   try{
-     const response =  await axios.post("http://localhost:3000/api/auth/register", {
-        username, email,passward
-    },{
-        withCredentials:true
-    })
+const API_URL = import.meta.env.VITE_API_URL;
 
-    return response.data
-   }catch(err){
-    console.log(err)
-   }
-   
-    
+export async function register({ username, email, passward }) {
+  const response = await axios.post(
+    `${API_URL}/api/auth/register`,
+    { username, email, passward },
+    { withCredentials: true }
+  );
+
+  return response.data;
 }
 
-export async function login({email,passward}){
-    try{
+export async function login({ email, passward }) {
+  const response = await axios.post(
+    `${API_URL}/api/auth/login`,
+    { email, passward },
+    { withCredentials: true }
+  );
 
-        const response = await axios.post("http://localhost:3000/api/auth/login",{
-            email,passward
-        },{withCredentials:true})
-
-        return response.data
-
-    }catch(err){
-        console.log("Status:", err.response?.status);
-    console.log("Response:", err.response?.data);
-    throw err;
-    }
+  return response.data;
 }
 
+export async function logout() {
+  const response = await axios.get(
+    `${API_URL}/api/auth/logout`,
+    { withCredentials: true }
+  );
 
-export async function logout(){
-    try{
-         const response = await axios.get("http://localhost:3000/api/auth/logout"
-            ,{withCredentials:true})
-
-        return response.data
-    }catch(err){
-         console.log(err)
-    }
+  return response.data;
 }
 
-export async function getme(){
-    try{
-         const response = await axios.get("http://localhost:3000/api/auth/getme"
-            ,{
-                withCredentials:true
-            })
+export async function getme() {
+  const response = await axios.get(
+    `${API_URL}/api/auth/getme`,
+    { withCredentials: true }
+  );
 
-        return response.data
-    }catch(err){
-         console.log(err)
-    }
-
+  return response.data;
 }

@@ -3,6 +3,7 @@ const {GoogleGenAI} = require('@google/genai')
  const{zodToJsonSchema} = require('zod-to-json-schema')
 const { Schema } = require('zod/v3')
 const puppeteer = require("puppeteer");
+const chromium = require("@sparticuz/chromium");
 
 const ai = new GoogleGenAI({
     apiKey: process.env.GOOGLE_GENAI_API_KEY
@@ -122,32 +123,60 @@ return result;
 }
 
 
+// async function generatePdfFromHtml(htmlContent) {
+//     //const browser = await puppeteer.launch()
+//     const browser = await puppeteer.launch({
+//     headless: true,
+//     args: [
+//         "--no-sandbox",
+//         "--disable-setuid-sandbox"
+//     ]
+// })
+//     const page = await browser.newPage();
+//     await page.setContent(htmlContent, { waitUntil: "networkidle0" })
+
+//     const pdfBuffer = await page.pdf({
+//         format: "A4", margin: {
+//             top: "20mm",
+//             bottom: "20mm",
+//             left: "15mm",
+//             right: "15mm"
+//         }
+//     })
+
+//     await browser.close()
+
+//     return pdfBuffer
+// }
+
+
 async function generatePdfFromHtml(htmlContent) {
-    //const browser = await puppeteer.launch()
     const browser = await puppeteer.launch({
-    headless: true,
-    args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox"
-    ]
-})
+        args: chromium.args,
+        executablePath: await chromium.executablePath(),
+        headless: true,
+    });
+
     const page = await browser.newPage();
-    await page.setContent(htmlContent, { waitUntil: "networkidle0" })
+
+    await page.setContent(htmlContent, {
+        waitUntil: "networkidle0",
+    });
 
     const pdfBuffer = await page.pdf({
-        format: "A4", margin: {
+        format: "A4",
+        margin: {
             top: "20mm",
             bottom: "20mm",
             left: "15mm",
-            right: "15mm"
-        }
-    })
+            right: "15mm",
+        },
+    });
 
-    await browser.close()
+    await browser.close();
 
-    return pdfBuffer
+    return pdfBuffer;
 }
-
 async function generateResumePdf({ resume, selfDescription, jobDescription }) {
 
     const resumePdfSchema = z.object({
